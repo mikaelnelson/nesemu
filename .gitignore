@@ -36,3 +36,4 @@
 
 # Build Directories
 cmake-build-debug/**
+.DS_Store
