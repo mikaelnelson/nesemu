@@ -4,6 +4,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         memorymap.cpp
         ram.cpp
         rom.cpp
+        cpu.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog)
