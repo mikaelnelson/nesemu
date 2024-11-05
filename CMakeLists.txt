@@ -3,4 +3,4 @@ project(nesemu)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(nesemu main.cpp)
+add_subdirectory(src)
