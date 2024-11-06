@@ -6,6 +6,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         memorymap.cpp
         ram.cpp
         rom.cpp
+        ppu.cpp
         cpu.cpp
 )
 
