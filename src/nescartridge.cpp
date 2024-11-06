@@ -19,9 +19,11 @@ bool NesCartridge::load(MemoryMap &map) {
     // @todo: Have base address and size for cartridge passed via
     // constructor. class itself will just know offsets within that address
     // space
-    spdlog::info("Map PRG ROM between 0x{:X} and 0x{:X}", 0x8000,
-                 0x8000 + (*prg_rom)->size() - 1);
-    map.register_device(*prg_rom, 0x8000, (*prg_rom)->size());
+    uint16_t address = 0xFFFF - (*prg_rom)->size() + 1;
+
+    spdlog::info("Map PRG ROM between 0x{:X} and 0x{:X}", address,
+                 address + (*prg_rom)->size() - 1);
+    map.register_device(*prg_rom, address, (*prg_rom)->size());
   } else {
     spdlog::error("NES Cartridge does not contain PRG ROM");
     return false;

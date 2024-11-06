@@ -4,6 +4,7 @@
 #include <set>
 
 #include "memoryinterface.h"
+#include "spdlog/spdlog.h"
 
 class MemoryMap : public MemoryInterface {
  public:
@@ -20,16 +21,14 @@ class MemoryMap : public MemoryInterface {
     uint16_t size;
     std::shared_ptr<MemoryInterface> device;
 
-    bool operator<(const MapEntry &other) const {
-      if (address <= other.address) {
-        return (address + size <= other.address);
-      } else if (address >= other.address) {
-        return (other.address + other.size <= address);
-      } else {
-        return false;
-      }
+    bool operator<(const MapEntry &lookup) const {
+      return lookup.address < address;
     }
   };
 
   std::set<MapEntry> _address_map;
+
+  std::optional<MapEntry> find_entry(const uint16_t address) const;
+
+  bool add_entry(const MapEntry &new_entry);
 };
