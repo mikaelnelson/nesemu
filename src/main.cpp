@@ -3,8 +3,8 @@
 #include "cartridge.h"
 #include "cartridgeloader.h"
 #include "cpu.h"
-#include "ppu.h"
 #include "memorymap.h"
+#include "ppu.h"
 #include "ram.h"
 
 int main(int argc, const char *argv[]) {
@@ -24,15 +24,16 @@ int main(int argc, const char *argv[]) {
   memory_map->register_device(internal_ram, 0x1000, internal_ram->size());
   memory_map->register_device(internal_ram, 0x1800, internal_ram->size());
 
-  // Register DummyPpu
-  auto ppu = std::make_shared<Ppu>(8);
+  // Register Ppu
+  auto ppu_map = std::make_shared<MemoryMap>();
+  auto ppu = std::make_shared<Ppu>(ppu_map);
   memory_map->register_device(ppu, 0x2000, ppu->size());
 
   // Load Cartridge
   auto cartridge_loader = std::make_shared<CartridgeLoader>();
 
   if (auto cartridge = cartridge_loader->load(argv[1])) {
-    (*cartridge)->load(*memory_map);
+    (*cartridge)->load(*memory_map, *ppu_map);
   } else {
     spdlog::error("Failed to load cartridge {}", argv[1]);
     return 1;

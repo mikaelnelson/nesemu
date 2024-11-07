@@ -2,7 +2,7 @@
 
 #include "spdlog/spdlog.h"
 
-bool NesCartridge::load(MemoryMap &map) {
+bool NesCartridge::load(MemoryMap &memory_map, MemoryMap &ppu_map) {
   const auto header = get_header();
 
   if (!header) {
@@ -23,14 +23,14 @@ bool NesCartridge::load(MemoryMap &map) {
 
     spdlog::info("Map PRG ROM between 0x{:X} and 0x{:X}", address,
                  address + (*prg_rom)->size() - 1);
-    map.register_device(*prg_rom, address, (*prg_rom)->size());
+    memory_map.register_device(*prg_rom, address, (*prg_rom)->size());
   } else {
     spdlog::error("NES Cartridge does not contain PRG ROM");
     return false;
   }
 
   if (const auto chr_rom = get_chr_rom(*header)) {
-    // @todo: This needs to be mapped to 0x0000 of the PPU memory map
+    ppu_map.register_device(*chr_rom, 0, (*chr_rom)->size());
   }
 
   return true;

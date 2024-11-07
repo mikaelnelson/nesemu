@@ -16,7 +16,7 @@ class NesCartridge : public Cartridge {
   NesCartridge() = delete;
   explicit NesCartridge(std::vector<uint8_t> data)
       : Cartridge(std::move(data)) {};
-  bool load(MemoryMap &map) override;
+  bool load(MemoryMap &memory_map, MemoryMap &ppu_map) override;
 
  private:
   class Header {
