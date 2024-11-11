@@ -12,3 +12,6 @@ FetchContent_Declare(mos6502
         GIT_REPOSITORY https://github.com/gianlucag/mos6502.git
 )
 add_subdirectory(mos6502)
+
+# OLC PixelGameEngine
+add_subdirectory(olc)

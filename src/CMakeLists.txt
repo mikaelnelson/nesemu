@@ -10,4 +10,6 @@ target_sources(${PROJECT_NAME} PRIVATE
         cpu.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog)
+find_package(spdlog REQUIRED)
+target_link_libraries(${PROJECT_NAME} spdlog::spdlog)
+
