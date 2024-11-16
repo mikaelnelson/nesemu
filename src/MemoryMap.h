@@ -3,12 +3,12 @@
 #include <memory>
 #include <set>
 
-#include "memoryinterface.h"
+#include "IMemory.h"
 #include "spdlog/spdlog.h"
 
-class MemoryMap : public MemoryInterface {
+class MemoryMap : public IMemory {
  public:
-  bool register_device(const std::shared_ptr<MemoryInterface> &device,
+  bool register_device(const std::shared_ptr<IMemory> &device,
                        const uint16_t address, const uint16_t size);
 
   // Implements MemoryInterface
@@ -19,7 +19,7 @@ class MemoryMap : public MemoryInterface {
   struct MapEntry {
     uint16_t address;
     uint16_t size;
-    std::shared_ptr<MemoryInterface> device;
+    std::shared_ptr<IMemory> device;
 
     bool operator<(const MapEntry &lookup) const {
       return lookup.address < address;

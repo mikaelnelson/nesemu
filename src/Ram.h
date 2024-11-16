@@ -1,8 +1,9 @@
 #pragma once
+#include <memory>
 
-#include "memoryinterface.h"
+#include "IMemory.h"
 
-class Ram : public MemoryInterface {
+class Ram : public IMemory {
  public:
   explicit Ram(const uint16_t size)
       : _size(size), _ram(std::make_unique<uint8_t[]>(size)) {};

@@ -1,4 +1,4 @@
-#include "nescartridge.h"
+#include "NesCartridge.h"
 
 #include "spdlog/spdlog.h"
 

@@ -3,11 +3,11 @@
 #include <memory>
 #include <vector>
 
-#include "memoryinterface.h"
+#include "IMemory.h"
 
-class Rom : public MemoryInterface {
+class Rom : public IMemory {
  public:
-  explicit Rom(const std::vector<uint8_t>& rom) : _rom(rom) {};
+  explicit Rom(const std::vector<uint8_t> &rom) : _rom(rom) {};
 
   uint16_t size() const { return _rom.size(); }
 

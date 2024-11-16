@@ -2,10 +2,10 @@
 #pragma once
 #include <optional>
 
-#include "cartridge.h"
-#include "memorymap.h"
-#include "ram.h"
-#include "rom.h"
+#include "Cartridge.h"
+#include "MemoryMap.h"
+#include "Ram.h"
+#include "Rom.h"
 
 /**
  * NES Cartridge

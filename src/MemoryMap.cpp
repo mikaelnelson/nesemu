@@ -1,14 +1,15 @@
-#include "memorymap.h"
+#include "MemoryMap.h"
 
 #include <spdlog/spdlog.h>
 
-bool MemoryMap::register_device(const std::shared_ptr<MemoryInterface>& device,
+bool MemoryMap::register_device(const std::shared_ptr<IMemory> &device,
                                 const uint16_t address, const uint16_t size) {
   bool result = add_entry(MapEntry{address, size, device});
 
   if (!result) {
     spdlog::warn(
-        "Device (0x{0:X} - 0x{1:X}) overlaps with existing device, cannot "
+        "Device (0x{0:X} - 0x{1:X}) overlaps with existing "
+        "device, cannot "
         "register",
         address, address + size - 1);
   }
@@ -37,7 +38,7 @@ void MemoryMap::write(const uint16_t address, const uint8_t data) {
 
 std::optional<MemoryMap::MapEntry> MemoryMap::find_entry(
     const uint16_t address) const {
-  for (const auto& entry : _address_map) {
+  for (const auto &entry : _address_map) {
     if (address >= entry.address && address < entry.address + entry.size) {
       return entry;
     }
@@ -45,11 +46,11 @@ std::optional<MemoryMap::MapEntry> MemoryMap::find_entry(
   return std::nullopt;
 }
 
-bool MemoryMap::add_entry(const MapEntry& new_entry) {
+bool MemoryMap::add_entry(const MapEntry &new_entry) {
   uint16_t new_entry_start = new_entry.address;
   uint16_t new_entry_end = new_entry.address + new_entry.size - 1;
 
-  for (const auto& map_entry : _address_map) {
+  for (const auto &map_entry : _address_map) {
     uint16_t map_entry_start = map_entry.address;
     uint16_t map_entry_end = map_entry.address + map_entry.size - 1;
 
