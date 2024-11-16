@@ -19,6 +19,8 @@ target_sources(${PROJECT_NAME} PRIVATE
         IMemory.h
         IObserver.h
         ISubject.h
+        CpuStatusSprite.cpp
+        CpuStatusSprite.h
 )
 
 find_package(spdlog REQUIRED)

@@ -9,21 +9,26 @@
 #include "spdlog/spdlog.h"
 
 struct CpuStatus {
+  CpuStatus() : A(0), X(0), Y(0), SP(0), PC(0), P(0) {}
+  CpuStatus(uint8_t a, uint8_t x, uint8_t y, uint8_t sp, uint16_t pc, uint8_t p)
+      : A(a), X(x), Y(y), SP(sp), PC(pc), P(p) {}
   uint8_t A;    // Accumulator
   uint8_t X;    // Index register X
   uint8_t Y;    // Index register Y
   uint8_t SP;   // Stack pointer
   uint16_t PC;  // Program counter
   uint8_t P;    // Processor status
+  bool operator==(const CpuStatus &cpu_status) const = default;
 };
 
-class Cpu : public ISubject<CpuStatus> {
+class Cpu {
  public:
   Cpu() = delete;
   explicit Cpu(std::shared_ptr<IMemory> memory_map);
 
   void reset();
   const uint16_t step();
+  CpuStatus get_cpu_status();
 
  private:
   class MemoryMapSingleton {
@@ -58,7 +63,4 @@ class Cpu : public ISubject<CpuStatus> {
 
   std::shared_ptr<IMemory> _memory_map;
   mos6502 _cpu;
-
-  CpuStatus get_cpu_status();
-  void update_observers();
 };
