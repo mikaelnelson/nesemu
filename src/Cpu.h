@@ -5,9 +5,19 @@
 #include <memory>
 
 #include "IMemory.h"
+#include "ISubject.h"
 #include "spdlog/spdlog.h"
 
-class Cpu {
+struct CpuStatus {
+  uint8_t A;    // Accumulator
+  uint8_t X;    // Index register X
+  uint8_t Y;    // Index register Y
+  uint8_t SP;   // Stack pointer
+  uint16_t PC;  // Program counter
+  uint8_t P;    // Processor status
+};
+
+class Cpu : public ISubject<CpuStatus> {
  public:
   Cpu() = delete;
   explicit Cpu(std::shared_ptr<IMemory> memory_map);
@@ -48,4 +58,7 @@ class Cpu {
 
   std::shared_ptr<IMemory> _memory_map;
   mos6502 _cpu;
+
+  CpuStatus get_cpu_status();
+  void update_observers();
 };
