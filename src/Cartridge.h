@@ -1,8 +1,7 @@
 #pragma once
 
-#include <memory>
 #include <vector>
-#include "memorymap.h"
+#include "MemoryMap.h"
 
 class Cartridge {
 public:

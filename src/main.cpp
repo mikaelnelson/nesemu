@@ -1,50 +1,50 @@
 #include <spdlog/spdlog.h>
 
-#include "cartridge.h"
-#include "cartridgeloader.h"
-#include "cpu.h"
-#include "ppu.h"
-#include "memorymap.h"
-#include "ram.h"
+#include "Cartridge.h"
+#include "CartridgeLoader.h"
+#include "Cpu.h"
+#include "MemoryMap.h"
+#include "Ppu.h"
+#include "Ram.h"
 
 int main(int argc, const char *argv[]) {
-  if (argc < 2) {
-    spdlog::error("Usage: {} <cartridge file>", argv[0]);
-    return 1;
-  }
+    if (argc < 2) {
+        spdlog::error("Usage: {} <cartridge file>", argv[0]);
+        return 1;
+    }
 
-  auto memory_map = std::make_shared<MemoryMap>();
-  auto internal_ram = std::make_shared<Ram>(0x0800);
+    auto memory_map = std::make_shared<MemoryMap>();
+    auto internal_ram = std::make_shared<Ram>(0x0800);
 
-  // Register Internal Ram
-  memory_map->register_device(internal_ram, 0x0000, internal_ram->size());
+    // Register Internal Ram
+    memory_map->register_device(internal_ram, 0x0000, internal_ram->size());
 
-  // Register Internal Ram Mirrors
-  memory_map->register_device(internal_ram, 0x0800, internal_ram->size());
-  memory_map->register_device(internal_ram, 0x1000, internal_ram->size());
-  memory_map->register_device(internal_ram, 0x1800, internal_ram->size());
+    // Register Internal Ram Mirrors
+    memory_map->register_device(internal_ram, 0x0800, internal_ram->size());
+    memory_map->register_device(internal_ram, 0x1000, internal_ram->size());
+    memory_map->register_device(internal_ram, 0x1800, internal_ram->size());
 
-  // Register DummyPpu
-  auto ppu = std::make_shared<Ppu>(8);
-  memory_map->register_device(ppu, 0x2000, ppu->size());
+    // Register DummyPpu
+    auto ppu = std::make_shared<Ppu>(8);
+    memory_map->register_device(ppu, 0x2000, ppu->size());
 
-  // Load Cartridge
-  auto cartridge_loader = std::make_shared<CartridgeLoader>();
+    // Load Cartridge
+    auto cartridge_loader = std::make_shared<CartridgeLoader>();
 
-  if (auto cartridge = cartridge_loader->load(argv[1])) {
-    (*cartridge)->load(*memory_map);
-  } else {
-    spdlog::error("Failed to load cartridge {}", argv[1]);
-    return 1;
-  }
+    if (auto cartridge = cartridge_loader->load(argv[1])) {
+        (*cartridge)->load(*memory_map);
+    } else {
+        spdlog::error("Failed to load cartridge {}", argv[1]);
+        return 1;
+    }
 
-  auto cpu = std::make_shared<Cpu>(memory_map);
-  cpu->reset();
+    auto cpu = std::make_shared<Cpu>(memory_map);
+    cpu->reset();
 
-  while (true) {
-    uint16_t cycles = cpu->step();
-    spdlog::info("Cycles: {}", cycles);
-  }
+    while (true) {
+        uint16_t cycles = cpu->step();
+        spdlog::info("Cycles: {}", cycles);
+    }
 
-  return 0;
+    return 0;
 }

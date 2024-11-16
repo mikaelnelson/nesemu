@@ -1,11 +1,11 @@
 #include <fstream>
 #include <iostream>
 
-#include "cartridge.h"
-#include "cartridgeloader.h"
-#include "nescartridge.h"
-#include "ram.h"
-#include "rom.h"
+#include "Cartridge.h"
+#include "CartridgeLoader.h"
+#include "NesCartridge.h"
+#include "Ram.h"
+#include "Rom.h"
 #include "spdlog/spdlog.h"
 
 std::optional<std::shared_ptr<Cartridge>>
