@@ -17,6 +17,8 @@ target_sources(${PROJECT_NAME} PRIVATE
         Cpu.h
         IBus.h
         IMemory.h
+        IObserver.h
+        ISubject.h
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog)
