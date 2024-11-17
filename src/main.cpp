@@ -4,14 +4,16 @@
 #include <filesystem>
 
 #define OLC_PGE_APPLICATION
+#include <olcPixelGameEngine.h>
+
 #include "Cartridge.h"
 #include "CartridgeLoader.h"
 #include "Cpu.h"
 #include "CpuStatusSprite.h"
 #include "MemoryMap.h"
 #include "Ppu.h"
+#include "PpuDisplaySprite.h"
 #include "Ram.h"
-#include "olcPixelGameEngine.h"
 
 class NESEmu : public olc::PixelGameEngine {
  public:
@@ -19,7 +21,9 @@ class NESEmu : public olc::PixelGameEngine {
       : _rom_filepath(rom_filepath),
         _memory_map(std::make_shared<MemoryMap>()),
         _cpu(std::make_shared<Cpu>(_memory_map)),
-        _cpu_status_sprite(_cpu, 150, 300) {
+        _ppu(std::make_shared<Ppu>(8)),
+        _cpu_status_sprite(_cpu, 150, 300),
+        _ppu_display_sprite(_ppu) {
     sAppName = "NESEmu";
   }
 
@@ -34,14 +38,13 @@ class NESEmu : public olc::PixelGameEngine {
     _memory_map->register_device(internal_ram, 0x1000, internal_ram->size());
     _memory_map->register_device(internal_ram, 0x1800, internal_ram->size());
 
-    // Register DummyPpu
-    auto ppu = std::make_shared<Ppu>(8);
-    _memory_map->register_device(ppu, 0x2000, ppu->size());
+    // Register Ppu
+    _memory_map->register_device(_ppu, 0x2000, _ppu->size());
 
     // Load Cartridge
     auto cartridge_loader = std::make_shared<CartridgeLoader>();
 
-    if (auto cartridge = cartridge_loader->load(_rom_filepath)) {
+    if (auto cartridge = CartridgeLoader::load(_rom_filepath)) {
       (*cartridge)->load(*_memory_map);
     } else {
       spdlog::error("Failed to load cartridge {}", _rom_filepath.string());
@@ -58,7 +61,9 @@ class NESEmu : public olc::PixelGameEngine {
 
     Clear(olc::BLACK);
 
-    DrawSprite(15, 20, _cpu_status_sprite.draw(this));
+    DrawSprite(0, 0, _ppu_display_sprite.draw(this));
+    DrawSprite(256, 0, _cpu_status_sprite.draw(this));
+
     return true;
   }
 
@@ -66,7 +71,9 @@ class NESEmu : public olc::PixelGameEngine {
   const std::filesystem::path _rom_filepath;
   std::shared_ptr<MemoryMap> _memory_map;
   std::shared_ptr<Cpu> _cpu;
+  std::shared_ptr<Ppu> _ppu;
   CpuStatusSprite _cpu_status_sprite;
+  PpuDisplaySprite _ppu_display_sprite;
 };
 
 int main(int argc, const char *argv[]) {
