@@ -17,8 +17,22 @@ struct CpuStatus {
   uint8_t Y;    // Index register Y
   uint8_t SP;   // Stack pointer
   uint16_t PC;  // Program counter
-  uint8_t P;    // Processor status
-  bool operator==(const CpuStatus &cpu_status) const = default;
+  union {
+    uint8_t P;  // Processor status
+    struct {
+      uint8_t carry : 1;              // Carry flag
+      uint8_t zero : 1;               // Zero flag
+      uint8_t interrupt_disable : 1;  // Interrupt disable flag
+      uint8_t decimal : 1;            // Decimal mode flag
+      uint8_t : 1;                    // (No CPU effect; see: the B flag)
+      uint8_t : 1;                    // (No CPU effect; always pushed as 1)
+      uint8_t overflow : 1;           // Overflow flag
+      uint8_t negative : 1;           // Negative flag
+    } PBits;
+  };
+  bool operator==(const CpuStatus &cpu_status) const {
+    return 0 == memcmp(this, &cpu_status, sizeof(CpuStatus));
+  };
 };
 
 class Cpu {
