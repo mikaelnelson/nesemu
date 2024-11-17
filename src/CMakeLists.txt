@@ -1,5 +1,6 @@
 add_executable(${PROJECT_NAME} main.cpp)
 
+target_include_directories(${PROJECT_NAME} PUBLIC .)
 target_sources(${PROJECT_NAME} PRIVATE
         CartridgeLoader.cpp
         CartridgeLoader.h
@@ -21,4 +22,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         ISubject.h
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog)
+find_package(spdlog REQUIRED)
+target_link_libraries(${PROJECT_NAME} spdlog::spdlog)
+
+add_subdirectory(olcDisplayComponents)

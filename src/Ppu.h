@@ -1,8 +1,14 @@
 #pragma once
+#include <array>
 
 #include "IMemory.h"
+#include "ISubject.h"
 
-class Ppu : public IMemory {
+static constexpr uint16_t PPU_V_RES = 240;
+static constexpr uint16_t PPU_H_RES = 256;
+using PpuFrame = std::array<uint8_t, PPU_V_RES * PPU_H_RES>;
+
+class Ppu : public ISubject<PpuFrame>, public IMemory {
  public:
   explicit Ppu(const uint16_t size) : _size(size) {};
 
