@@ -15,3 +15,8 @@ add_subdirectory(mos6502)
 
 # OLC PixelGameEngine
 add_subdirectory(olc)
+
+# Tablulate
+FetchContent_Declare(tabulate
+        GIT_REPOSITORY https://github.com/p-ranav/tabulate.git)
+add_subdirectory(tabulate)
