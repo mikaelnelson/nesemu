@@ -9,10 +9,10 @@
 #include "Cartridge.h"
 #include "CartridgeLoader.h"
 #include "Clock.h"
+#include "ClockDivider.h"
 #include "Cpu.h"
 #include "CpuStatusSprite.h"
 #include "MemoryMap.h"
-#include "NesClockTree.h"
 #include "Ppu.h"
 #include "PpuDisplaySprite.h"
 #include "Ram.h"
@@ -24,14 +24,19 @@ class NESEmu : public olc::PixelGameEngine {
         _memory_map(std::make_shared<MemoryMap>()),
         _cpu(std::make_shared<Cpu>(_memory_map)),
         _ppu(std::make_shared<Ppu>(8)),
-        _nes_clock_tree(_ppu->clock_signal(), _cpu->clock_signal()),
-        _clock(5369318, &_nes_clock_tree),  // 5.369 MHz
+        _system_clock(21477272, 12),  // 21.4773 MHz, 12 cycles per update
+        _ppu_clock(4),                // 5.369 MHz
+        _cpu_clock(3),                // 1.79 Mhz
         _cpu_status_sprite(_cpu, 150, 300),
         _ppu_display_sprite(_ppu) {
     sAppName = "NESEmu";
   }
 
   bool OnUserCreate() override {
+    // Setup Clocks
+    _system_clock.add_observer(&_ppu_clock);
+    _ppu_clock.add_observer(&_cpu_clock);
+
     auto internal_ram = std::make_shared<Ram>(0x0800);
 
     // Register Internal Ram
@@ -56,11 +61,13 @@ class NESEmu : public olc::PixelGameEngine {
     }
 
     _cpu->reset();
+    _cpu_clock.add_observer(_cpu->clock_signal());
+    _ppu_clock.add_observer(_ppu->clock_signal());
     return true;
   }
 
   bool OnUserUpdate(float fElapsedTime) override {
-    _clock.run(fElapsedTime);
+    _system_clock.run(fElapsedTime);
 
     Clear(olc::BLACK);
 
@@ -75,8 +82,9 @@ class NESEmu : public olc::PixelGameEngine {
   std::shared_ptr<MemoryMap> _memory_map;
   std::shared_ptr<Cpu> _cpu;
   std::shared_ptr<Ppu> _ppu;
-  NesClockTree _nes_clock_tree;
-  Clock _clock;
+  Clock _system_clock;
+  ClockDivider _ppu_clock;
+  ClockDivider _cpu_clock;
   CpuStatusSprite _cpu_status_sprite;
   PpuDisplaySprite _ppu_display_sprite;
 };
