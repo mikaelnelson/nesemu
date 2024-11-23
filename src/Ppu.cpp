@@ -28,6 +28,8 @@ uint8_t Ppu::read(const uint16_t address) const {
     case Registers::STATUS: {
       const auto status = _registers.status;
       _registers.status_bits.vertical_blank = false;
+
+      _int_registers.w = false;
       return status;
     }
 
@@ -42,10 +44,16 @@ uint8_t Ppu::read(const uint16_t address) const {
       return 0;
 
     case Registers::ADDRESS:
-      return _registers.address;
+      // Write Only
+      return 0;
 
-    case Registers::DATA:
+    case Registers::DATA: {
+      static uint8_t cached_data = 0;
+      _registers.data = cached_data;
+      // cached_data = _ppu_map->read(_registers.address);
+
       return _registers.data;
+    }
 
     default:
       spdlog::error("Ppu::read: unknown register address: {}", address);
@@ -58,6 +66,9 @@ void Ppu::write(const uint16_t address, const uint8_t data) {
     spdlog::error("Ppu::write: address out of bounds");
     return;
   }
+
+  spdlog::info("Ppu::write: 0x{0:X}", address);
+
   switch (address) {
     case Registers::CONTROLLER:
       _registers.controller = data;
@@ -83,9 +94,19 @@ void Ppu::write(const uint16_t address, const uint8_t data) {
       _registers.scroll = data;
       return;
 
-    case Registers::ADDRESS:
-      _registers.address = data;  // Palette
+    case Registers::ADDRESS: {
+      if (_int_registers.w) {
+        // Write High Byte
+        _registers.address &= 0x00FF;
+        _registers.address |= (data << 8);
+        _int_registers.w = true;
+      } else {
+        _registers.address &= 0xFF00;
+        _registers.address |= data;
+      }
+      _registers.address &= 0x3FFF;
       return;
+    }
 
     case Registers::DATA:
       _registers.data = data;  // Palette

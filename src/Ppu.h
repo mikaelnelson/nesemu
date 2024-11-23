@@ -54,14 +54,19 @@ class Ppu : public ISubject<PpuFrame>, public IMemory {
     uint8_t oam_address = 0;
     uint8_t oam_data = 0;
     uint8_t scroll = 0;
-    uint8_t address = 0;
+    uint16_t address = 0;
     uint8_t data = 0;
+  };
+
+  struct InternalRegisters {
+    uint8_t w : 1 = 0;  // Write Latch, 0 = High Byte, 1 = Low Byte
   };
 
   const uint16_t _size;
   int _cycle;
   int _scanline;
   mutable Registers _registers;
+  mutable InternalRegisters _int_registers;
 
   void tick();
   void do_vblank(const int scanline, const int cycle);
