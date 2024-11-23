@@ -4,8 +4,8 @@
 
 #include <memory>
 
+#include "IClock.h"
 #include "IMemory.h"
-#include "IObserver.h"
 #include "spdlog/spdlog.h"
 
 struct CpuStatus {
@@ -43,18 +43,15 @@ class Cpu {
   void reset();
   const uint16_t step();
   CpuStatus get_cpu_status();
-  IObserver<uint32_t> *clock_signal() { return &_clock; }
+  IClock *clock_signal() { return &_clock; }
 
  private:
-  class Clock : public IObserver<uint32_t> {
+  class Clock : public IClock {
    public:
-    // @todo: We should move core CPU logic into a Cpu::Core class, then Clock
-    // gets a pointer to an object of this class. When Cpu::Clock is updated, it
-    // calls the Core's step()/run() method.
     Clock() = default;
 
-    void update(const unsigned &data) override {
-      spdlog::info("CPU Cycles: {}", data);
+    void update(const uint32_t cycles) override {
+      spdlog::info("CPU Cycles: {}", cycles);
     }
   };
 
