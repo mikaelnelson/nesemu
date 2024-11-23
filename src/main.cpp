@@ -21,7 +21,7 @@ class NESEmu : public olc::PixelGameEngine {
       : _rom_filepath(rom_filepath),
         _memory_map(std::make_shared<MemoryMap>()),
         _cpu(std::make_shared<Cpu>(_memory_map)),
-        _ppu(std::make_shared<Ppu>(8)),
+        _ppu(std::make_shared<Ppu>()),
         _cpu_status_sprite(_cpu, 150, 300),
         _ppu_display_sprite(_ppu) {
     sAppName = "NESEmu";
