@@ -56,8 +56,8 @@ class NESEmu : public olc::PixelGameEngine {
   }
 
   bool OnUserUpdate(float fElapsedTime) override {
-    uint16_t cycles = _cpu->step();
-    spdlog::info("Cycles: {}", cycles);
+    _cpu->step();
+    _ppu->step();
 
     Clear(olc::BLACK);
 

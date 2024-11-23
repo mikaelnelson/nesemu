@@ -4,6 +4,8 @@
 
 #include "spdlog/spdlog.h"
 
+const uint16_t Ppu::step() { return 3; }
+
 uint8_t Ppu::read(const uint16_t address) const {
   if (address >= _size) {
     spdlog::error("Ppu::read: address out of bounds");

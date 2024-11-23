@@ -13,6 +13,7 @@ class Ppu : public ISubject<PpuFrame>, public IMemory {
   explicit Ppu(const uint16_t size) : _size(size) {};
 
   uint16_t size() const { return _size; }
+  const uint16_t step();
 
   // Implements MemoryInterface
   uint8_t read(const uint16_t address) const override;
