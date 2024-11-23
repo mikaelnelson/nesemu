@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "IMemory.h"
-#include "IObserver.h"
+#include "ISubject.h"
 #include "spdlog/spdlog.h"
 
 struct CpuStatus {
@@ -43,21 +43,8 @@ class Cpu {
   void reset();
   const uint16_t step();
   CpuStatus get_cpu_status();
-  IObserver<uint32_t> *clock_signal() { return &_clock; }
 
  private:
-  class Clock : public IObserver<uint32_t> {
-   public:
-    // @todo: We should move core CPU logic into a Cpu::Core class, then Clock
-    // gets a pointer to an object of this class. When Cpu::Clock is updated, it
-    // calls the Core's step()/run() method.
-    Clock() = default;
-
-    void update(const unsigned &data) override {
-      spdlog::info("CPU Cycles: {}", data);
-    }
-  };
-
   class MemoryMapSingleton {
    protected:
     explicit MemoryMapSingleton(std::shared_ptr<IMemory> memory_map)
@@ -89,6 +76,5 @@ class Cpu {
   };
 
   std::shared_ptr<IMemory> _memory_map;
-  Clock _clock;
   mos6502 _cpu;
 };

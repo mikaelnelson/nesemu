@@ -2,10 +2,6 @@ add_executable(${PROJECT_NAME} main.cpp)
 
 target_include_directories(${PROJECT_NAME} PUBLIC .)
 target_sources(${PROJECT_NAME} PRIVATE
-        Clock.cpp
-        Clock.h
-        ClockDivider.cpp
-        ClockDivider.h
         CartridgeLoader.cpp
         CartridgeLoader.h
         NesCartridge.cpp
