@@ -56,8 +56,12 @@ class NESEmu : public olc::PixelGameEngine {
   }
 
   bool OnUserUpdate(float fElapsedTime) override {
-    _cpu->step();
-    _ppu->step();
+    // Temporarily call 100 times per update, will adjust this to be
+    // based on 60fps later
+    for (int i = 0; i < 100; i++) {
+      _cpu->clock_update(1);
+      _ppu->clock_update(3);
+    }
 
     Clear(olc::BLACK);
 

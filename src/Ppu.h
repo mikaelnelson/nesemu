@@ -10,16 +10,22 @@ using PpuFrame = std::array<uint8_t, PPU_V_RES * PPU_H_RES>;
 
 class Ppu : public ISubject<PpuFrame>, public IMemory {
  public:
-  Ppu() : _size(Registers::COUNT) {};
+  Ppu() : _size(Registers::COUNT), _cycle(0), _scanline(SCANLINE_PRE_RENDER) {};
 
   uint16_t size() const { return _size; }
-  const uint16_t step();
+  const int clock_update(int cycles);
 
   // Implements MemoryInterface
   uint8_t read(const uint16_t address) const override;
   void write(const uint16_t address, const uint8_t data) override;
 
  private:
+  static constexpr int CYCLES_PER_SCANLINE = 341, SCANLINES_PER_FRAME = 262;
+
+  static constexpr int SCANLINE_VISIBLE_START = 0, SCANLINE_VISIBLE_END = 239,
+                       SCANLINE_POST_RENDER = 240, SCANLINE_VBLANK_START = 241,
+                       SCANLINE_VBLANK_END = 260, SCANLINE_PRE_RENDER = 261;
+
   struct Registers {
     static constexpr uint8_t COUNT = 8;
 
@@ -53,7 +59,10 @@ class Ppu : public ISubject<PpuFrame>, public IMemory {
   };
 
   const uint16_t _size;
-  uint16_t _cycle = 0;
-  uint16_t _scanline = 0;
+  int _cycle;
+  int _scanline;
   mutable Registers _registers;
+
+  void tick();
+  void do_vblank(const int scanline, const int cycle);
 };

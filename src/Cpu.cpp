@@ -12,10 +12,10 @@ Cpu::Cpu(std::shared_ptr<IMemory> memory_map)
 
 void Cpu::reset() { _cpu.Reset(); }
 
-const uint16_t Cpu::step() {
+const int Cpu::clock_update(const int cycles) {
   uint64_t cycles_ran = 0;
-  _cpu.Run(1, cycles_ran, mos6502::CycleMethod::INST_COUNT);
-  return static_cast<uint16_t>(cycles_ran);
+  _cpu.Run(cycles, cycles_ran, mos6502::CycleMethod::INST_COUNT);
+  return static_cast<int>(cycles_ran);
 }
 
 CpuStatus Cpu::get_cpu_status() {

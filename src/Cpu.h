@@ -41,7 +41,7 @@ class Cpu {
   explicit Cpu(std::shared_ptr<IMemory> memory_map);
 
   void reset();
-  const uint16_t step();
+  const int clock_update(int cycles);
   CpuStatus get_cpu_status();
 
  private:
