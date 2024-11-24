@@ -20,8 +20,9 @@ class NESEmu : public olc::PixelGameEngine {
   explicit NESEmu(const std::filesystem::path &rom_filepath)
       : _rom_filepath(rom_filepath),
         _memory_map(std::make_shared<MemoryMap>()),
+        _ppu_map(std::make_shared<MemoryMap>()),
         _cpu(std::make_shared<Cpu>(_memory_map)),
-        _ppu(std::make_shared<Ppu>()),
+        _ppu(std::make_shared<Ppu>(_ppu_map)),
         _cpu_status_sprite(_cpu, 150, 300),
         _ppu_display_sprite(_ppu) {
     sAppName = "NESEmu";
@@ -45,7 +46,7 @@ class NESEmu : public olc::PixelGameEngine {
     auto cartridge_loader = std::make_shared<CartridgeLoader>();
 
     if (auto cartridge = CartridgeLoader::load(_rom_filepath)) {
-      (*cartridge)->load(*_memory_map);
+      (*cartridge)->load(*_memory_map, *_ppu_map);
     } else {
       spdlog::error("Failed to load cartridge {}", _rom_filepath.string());
       return false;
@@ -74,6 +75,7 @@ class NESEmu : public olc::PixelGameEngine {
  private:
   const std::filesystem::path _rom_filepath;
   std::shared_ptr<MemoryMap> _memory_map;
+  std::shared_ptr<MemoryMap> _ppu_map;
   std::shared_ptr<Cpu> _cpu;
   std::shared_ptr<Ppu> _ppu;
   CpuStatusSprite _cpu_status_sprite;

@@ -10,7 +10,11 @@ using PpuFrame = std::array<uint8_t, PPU_V_RES * PPU_H_RES>;
 
 class Ppu : public ISubject<PpuFrame>, public IMemory {
  public:
-  Ppu() : _size(Registers::COUNT), _cycle(0), _scanline(SCANLINE_PRE_RENDER) {};
+  explicit Ppu(const std::shared_ptr<IMemory> &ppu_map)
+      : _ppu_map(ppu_map),
+        _size(Registers::COUNT),
+        _cycle(0),
+        _scanline(SCANLINE_PRE_RENDER) {};
 
   uint16_t size() const { return _size; }
   const int clock_update(int cycles);
@@ -62,6 +66,7 @@ class Ppu : public ISubject<PpuFrame>, public IMemory {
     uint8_t w : 1 = 0;  // Write Latch, 0 = High Byte, 1 = Low Byte
   };
 
+  std::shared_ptr<IMemory> _ppu_map;
   const uint16_t _size;
   int _cycle;
   int _scanline;
