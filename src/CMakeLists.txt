@@ -4,8 +4,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC .)
 target_sources(${PROJECT_NAME} PRIVATE
         CartridgeLoader.cpp
         CartridgeLoader.h
-        NesCartridge.cpp
-        NesCartridge.h
+        Cartridge.cpp
+        Cartridge.h
         MemoryMap.cpp
         MemoryMap.h
         Ram.cpp

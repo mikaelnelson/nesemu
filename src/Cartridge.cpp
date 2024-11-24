@@ -1,8 +1,8 @@
-#include "NesCartridge.h"
+#include "Cartridge.h"
 
 #include "spdlog/spdlog.h"
 
-bool NesCartridge::load(MemoryMap &map) {
+bool Cartridge::load(MemoryMap &memory_map, MemoryMap &ppu_map) {
   const auto header = get_header();
 
   if (!header) {
@@ -23,7 +23,7 @@ bool NesCartridge::load(MemoryMap &map) {
 
     spdlog::info("Map PRG ROM between 0x{:X} and 0x{:X}", address,
                  address + (*prg_rom)->size() - 1);
-    map.register_device(*prg_rom, address, (*prg_rom)->size());
+    memory_map.register_device(*prg_rom, address, (*prg_rom)->size());
   } else {
     spdlog::error("NES Cartridge does not contain PRG ROM");
     return false;
@@ -36,7 +36,7 @@ bool NesCartridge::load(MemoryMap &map) {
   return true;
 }
 
-std::optional<NesCartridge::Header> NesCartridge::get_header() const {
+std::optional<Cartridge::Header> Cartridge::get_header() const {
   if (_data.size() < Header::get_header_size()) {
     spdlog::error("ROM not large enough to contain header");
     return std::nullopt;
@@ -55,7 +55,7 @@ std::optional<NesCartridge::Header> NesCartridge::get_header() const {
   return header;
 }
 
-std::optional<std::shared_ptr<Rom>> NesCartridge::get_prg_rom(
+std::optional<std::shared_ptr<Rom>> Cartridge::get_prg_rom(
     const Header &header) const {
   const uint16_t offset = Header::get_header_size() + header.get_trainer_size();
   const uint16_t size = header.get_prg_rom_size();
@@ -67,7 +67,7 @@ std::optional<std::shared_ptr<Rom>> NesCartridge::get_prg_rom(
   return get_rom(offset, size);
 }
 
-std::optional<std::shared_ptr<Rom>> NesCartridge::get_chr_rom(
+std::optional<std::shared_ptr<Rom>> Cartridge::get_chr_rom(
     const Header &header) const {
   const uint16_t offset = Header::get_header_size() +
                           header.get_trainer_size() + header.get_prg_rom_size();
@@ -80,8 +80,8 @@ std::optional<std::shared_ptr<Rom>> NesCartridge::get_chr_rom(
   return get_rom(offset, size);
 }
 
-std::shared_ptr<Rom> NesCartridge::get_rom(const uint16_t offset,
-                                           const uint16_t size) const {
+std::shared_ptr<Rom> Cartridge::get_rom(const uint16_t offset,
+                                        const uint16_t size) const {
   std::vector<uint8_t> data(_data.begin() + offset,
                             _data.begin() + offset + size);
 

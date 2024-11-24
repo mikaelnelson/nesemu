@@ -4,7 +4,6 @@
 #include <iostream>
 
 #include "Cartridge.h"
-#include "NesCartridge.h"
 #include "Ram.h"
 #include "Rom.h"
 #include "spdlog/spdlog.h"
@@ -25,7 +24,7 @@ std::optional<std::shared_ptr<Cartridge>> CartridgeLoader::load(
   const std::string file_ext = rom_filepath.extension().string();
 
   if (file_ext == ".nes") {
-    return std::make_shared<NesCartridge>(buffer);
+    return std::make_shared<Cartridge>(buffer);
   }
 
   return std::nullopt;
