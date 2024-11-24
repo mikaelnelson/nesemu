@@ -96,20 +96,24 @@ void Ppu::write(const uint16_t address, const uint8_t data) {
 
     case Registers::ADDRESS: {
       if (_int_registers.w) {
+        // Write Low Byte
+        _registers.address &= 0xFF00;
+        _registers.address |= data;
+      } else {
         // Write High Byte
         _registers.address &= 0x00FF;
         _registers.address |= (data << 8);
         _int_registers.w = true;
-      } else {
-        _registers.address &= 0xFF00;
-        _registers.address |= data;
       }
       _registers.address &= 0x3FFF;
       return;
     }
 
     case Registers::DATA:
-      _registers.data = data;  // Palette
+      _registers.data = data;
+      //@todo _ppu_map->write(_registers.address, _registers.data);
+      _registers.address++;
+      _registers.address &= 0x3FFF;
       return;
 
     default:
@@ -127,6 +131,7 @@ void Ppu::tick() {
              _scanline <= SCANLINE_VBLANK_END) {
     do_vblank(_scanline, _cycle);
   } else if (_scanline == SCANLINE_PRE_RENDER) {
+    do_pre_render(_cycle);
   } else {
     spdlog::error("Ppu::tick: invalid scanline {}", _scanline);
   }
@@ -146,8 +151,15 @@ void Ppu::tick() {
 
 void Ppu::do_vblank(const int scanline, const int cycle) {
   if (scanline == SCANLINE_VBLANK_START && cycle == 1) {
-    // @todo: Emit VBlank NMI Signal Here
     spdlog::info("Ppu::do_vblank");
     _registers.status_bits.vertical_blank = 1;
+
+    // @todo: Emit VBlank NMI Signal Here If Enabled
+  }
+}
+
+void Ppu::do_pre_render(const int cycle) {
+  if (cycle == 1) {
+    _registers.status_bits.vertical_blank = 0;
   }
 }

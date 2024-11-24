@@ -70,4 +70,5 @@ class Ppu : public ISubject<PpuFrame>, public IMemory {
 
   void tick();
   void do_vblank(const int scanline, const int cycle);
+  void do_pre_render(const int cycle);
 };
