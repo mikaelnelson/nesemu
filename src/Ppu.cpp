@@ -112,7 +112,8 @@ void Ppu::write(const uint16_t address, const uint8_t data) {
     case DATA:
       _registers.data = data;
       _ppu_map->write(_registers.address, _registers.data);
-      _registers.address++;
+      _registers.address +=
+          _registers.controller_bits.vram_address_increment ? 32 : 1;
       _registers.address &= 0x3FFF;
       return;
 

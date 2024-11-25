@@ -12,7 +12,18 @@ class Ppu : public ISubject<PpuFrame>, public IMemory {
   struct Registers {
     static constexpr uint8_t COUNT = 8;
 
-    uint8_t controller = 0;
+    union {
+      uint8_t controller = 0;
+      struct {
+        uint8_t vblank_nmi_enable : 1;
+        uint8_t ppu_master_slave_select : 1;
+        uint8_t sprite_size : 1;
+        uint8_t background_pattern_table_addr : 1;
+        uint8_t sprite_pattern_table_addr : 1;
+        uint8_t vram_address_increment : 1;
+        uint8_t base_nametable_address : 2;
+      } controller_bits;
+    };
     uint8_t mask = 0;
     union {
       uint8_t status = 0;
