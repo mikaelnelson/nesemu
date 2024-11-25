@@ -18,7 +18,7 @@ const int Cpu::clock_update(const int cycles) {
   return static_cast<int>(cycles_ran);
 }
 
-CpuStatus Cpu::get_cpu_status() {
-  return CpuStatus(_cpu.GetA(), _cpu.GetX(), _cpu.GetY(), _cpu.GetS(),
+Cpu::Registers Cpu::get_registers() {
+  return Registers(_cpu.GetA(), _cpu.GetX(), _cpu.GetY(), _cpu.GetS(),
                    _cpu.GetPC(), _cpu.GetP());
 }

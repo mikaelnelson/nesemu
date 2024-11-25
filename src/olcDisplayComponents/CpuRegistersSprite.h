@@ -17,7 +17,7 @@ class CpuRegistersSprite : public ISpriteDraw, public olc::Sprite {
 
  private:
   const std::shared_ptr<Cpu> _cpu;
-  CpuStatus _prv_cpu_status;
+  Cpu::Registers _prv_cpu_registers;
 
-  static tabulate::Table generate_table(const CpuStatus& status);
+  static tabulate::Table generate_table(const Cpu::Registers& cpu_registers);
 };

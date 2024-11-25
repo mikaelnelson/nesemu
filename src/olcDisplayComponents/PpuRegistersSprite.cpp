@@ -31,10 +31,15 @@ tabulate::Table PpuRegistersSprite::generate_registers_table(
     Ppu::Registers& registers) {
   tabulate::Table table;
 
+  std::string status = std::format(
+      "{} {} {}", (registers.status_bits.vertical_blank ? "V" : "_"),
+      (registers.status_bits.sprite_zero_hit ? "S" : "_"),
+      (registers.status_bits.sprite_overflow ? "O" : "_"));
+
   table.add_row({"Reg", "Value"});
   table.add_row({"CTRL", std::format("{:02X}", registers.controller)});
   table.add_row({"MASK", std::format("{:02X}", registers.mask)});
-  table.add_row({"STATUS", std::format("{:08B}", registers.status)});
+  table.add_row({"STATUS", status});
   table.add_row({"OAMA", std::format("{:02X}", registers.oam_address)});
   table.add_row({"OAMD", std::format("{:02X}", registers.oam_data)});
   table.add_row({"SCROLL", std::format("{:02X}", registers.scroll)});

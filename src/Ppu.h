@@ -30,7 +30,7 @@ class Ppu : public ISubject<PpuFrame>, public IMemory {
       struct {
         uint8_t : 5;
         uint8_t sprite_overflow : 1;
-        uint8_t sprite_zero_bit : 1;
+        uint8_t sprite_zero_hit : 1;
         uint8_t vertical_blank : 1;
       } status_bits;
     };

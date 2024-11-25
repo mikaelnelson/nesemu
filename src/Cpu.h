@@ -8,41 +8,42 @@
 #include "ISubject.h"
 #include "spdlog/spdlog.h"
 
-struct CpuStatus {
-  CpuStatus() : A(0), X(0), Y(0), SP(0), PC(0), P(0) {}
-  CpuStatus(uint8_t a, uint8_t x, uint8_t y, uint8_t sp, uint16_t pc, uint8_t p)
-      : A(a), X(x), Y(y), SP(sp), PC(pc), P(p) {}
-  uint8_t A;    // Accumulator
-  uint8_t X;    // Index register X
-  uint8_t Y;    // Index register Y
-  uint8_t SP;   // Stack pointer
-  uint16_t PC;  // Program counter
-  union {
-    uint8_t P;  // Processor status
-    struct {
-      uint8_t carry : 1;              // Carry flag
-      uint8_t zero : 1;               // Zero flag
-      uint8_t interrupt_disable : 1;  // Interrupt disable flag
-      uint8_t decimal : 1;            // Decimal mode flag
-      uint8_t : 1;                    // (No CPU effect; see: the B flag)
-      uint8_t : 1;                    // (No CPU effect; always pushed as 1)
-      uint8_t overflow : 1;           // Overflow flag
-      uint8_t negative : 1;           // Negative flag
-    } PBits;
-  };
-  bool operator==(const CpuStatus &cpu_status) const {
-    return 0 == memcmp(this, &cpu_status, sizeof(CpuStatus));
-  };
-};
-
 class Cpu {
  public:
+  struct Registers {
+    Registers() : a(0), x(0), y(0), sp(0), pc(0), p(0) {}
+    Registers(uint8_t a, uint8_t x, uint8_t y, uint8_t sp, uint16_t pc,
+              uint8_t p)
+        : a(a), x(x), y(y), sp(sp), pc(pc), p(p) {}
+    uint8_t a;    // Accumulator
+    uint8_t x;    // Index register x
+    uint8_t y;    // Index register y
+    uint8_t sp;   // Stack pointer
+    uint16_t pc;  // Program counter
+    union {
+      uint8_t p;  // Processor status
+      struct {
+        uint8_t carry : 1;              // Carry flag
+        uint8_t zero : 1;               // Zero flag
+        uint8_t interrupt_disable : 1;  // Interrupt disable flag
+        uint8_t decimal : 1;            // Decimal mode flag
+        uint8_t : 1;                    // (No CPU effect; see: the B flag)
+        uint8_t : 1;                    // (No CPU effect; always pushed as 1)
+        uint8_t overflow : 1;           // Overflow flag
+        uint8_t negative : 1;           // Negative flag
+      } p_bits;
+    };
+    bool operator==(const Registers &cpu_status) const {
+      return 0 == memcmp(this, &cpu_status, sizeof(Registers));
+    };
+  };
+
   Cpu() = delete;
   explicit Cpu(std::shared_ptr<IMemory> memory_map);
 
   void reset();
   const int clock_update(int cycles);
-  CpuStatus get_cpu_status();
+  Registers get_registers();
 
  private:
   class MemoryMapSingleton {
