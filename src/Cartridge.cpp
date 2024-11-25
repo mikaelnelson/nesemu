@@ -16,9 +16,6 @@ bool Cartridge::load(MemoryMap &memory_map, MemoryMap &ppu_map) {
   }
 
   if (const auto prg_rom = get_prg_rom(*header)) {
-    // @todo: Have base address and size for cartridge passed via
-    // constructor. class itself will just know offsets within that address
-    // space
     uint16_t address = 0xFFFF - (*prg_rom)->size() + 1;
 
     spdlog::info("Map PRG ROM between 0x{:X} and 0x{:X}", address,
@@ -30,7 +27,7 @@ bool Cartridge::load(MemoryMap &memory_map, MemoryMap &ppu_map) {
   }
 
   if (const auto chr_rom = get_chr_rom(*header)) {
-    // @todo: This needs to be mapped to 0x0000 of the PPU memory map
+    ppu_map.register_device(*chr_rom, 0x0000, (*chr_rom)->size());
   }
 
   return true;
