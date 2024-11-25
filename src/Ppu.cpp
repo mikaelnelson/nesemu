@@ -160,7 +160,6 @@ void Ppu::tick() {
 
 void Ppu::do_vblank(const int scanline, const int cycle) {
   if (scanline == SCANLINE_VBLANK_START && cycle == 1) {
-    spdlog::info("Ppu::do_vblank");
     _registers.status_bits.vertical_blank = 1;
 
     // @todo: Emit VBlank NMI Signal Here If Enabled

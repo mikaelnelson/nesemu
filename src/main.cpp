@@ -16,7 +16,7 @@
 #include "PpuRegistersSprite.h"
 #include "Ram.h"
 
-class NESEmu : public olc::PixelGameEngine {
+class NESEmu : public olc::PixelGameEngine, public IObserver<PpuFrame> {
  public:
   explicit NESEmu(const std::filesystem::path &rom_filepath)
       : _rom_filepath(rom_filepath),
@@ -55,17 +55,23 @@ class NESEmu : public olc::PixelGameEngine {
     }
 
     _ppu->add_observer(&_ppu_display_sprite);
+    _ppu->add_observer(this);
 
     _cpu->reset();
     return true;
   }
 
-  bool OnUserUpdate(float fElapsedTime) override {
-    // Temporarily call 100 times per update, will adjust this to be
-    // based on 60fps later
-    for (int i = 0; i < 1000; i++) {
-      _cpu->clock_update(1);
-      _ppu->clock_update(3);
+  bool OnUserUpdate(float elapsed_time) override {
+    if (_residual_time >= 0.0f) {
+      _residual_time -= elapsed_time;
+    } else {
+      _residual_time += (1.0f / 60.0f) - elapsed_time;
+
+      do {
+        _cpu->clock_update(1);
+        _ppu->clock_update(3);
+      } while (!_frame_ready);
+      _frame_ready = false;
     }
 
     Clear(olc::BLACK);
@@ -78,6 +84,8 @@ class NESEmu : public olc::PixelGameEngine {
     return true;
   }
 
+  void update(const PpuFrame &) override { _frame_ready = true; }
+
  private:
   const std::filesystem::path _rom_filepath;
   std::shared_ptr<MemoryMap> _memory_map;
@@ -87,6 +95,8 @@ class NESEmu : public olc::PixelGameEngine {
   CpuRegistersSprite _cpu_status_sprite;
   PpuRegistersSprite _ppu_registers_sprite;
   PpuDisplaySprite _ppu_display_sprite;
+  bool _frame_ready = false;
+  float _residual_time = 0.0f;
 };
 
 int main(int argc, const char *argv[]) {
