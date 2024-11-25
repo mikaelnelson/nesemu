@@ -1,19 +1,24 @@
 #include "CpuStatusSprite.h"
 
 olc::Sprite* CpuStatusSprite::draw(olc::PixelGameEngine* pge) {
-  if (auto cpu_status = _cpu->get_cpu_status(); cpu_status != _prv_cpu_status) {
+  static bool first_time = true;
+  if (auto cpu_status = _cpu->get_cpu_status();
+      cpu_status != _prv_cpu_status || first_time) {
     pge->SetDrawTarget(this);
 
     auto table = generate_table(cpu_status);
+    std::string table_str = "CPU Registers\n" + table.str();
 
-    pge->DrawString(0, 0, table.str(), olc::WHITE);
+    pge->Clear(olc::BLACK);
+    pge->DrawString(4, 4, table_str, olc::WHITE);
 
     pge->SetDrawTarget(nullptr);
     _prv_cpu_status = cpu_status;
+    first_time = false;
     return this;
   }
 
-  return nullptr;
+  return this;
 }
 
 tabulate::Table CpuStatusSprite::generate_table(const CpuStatus& status) {
@@ -25,7 +30,7 @@ tabulate::Table CpuStatusSprite::generate_table(const CpuStatus& status) {
   table.add_row({"Y", std::format("{:02X}", status.Y)});
   table.add_row({"SP", std::format("{:02X}", status.SP)});
   table.add_row({"PC", std::format("{:04X}", status.PC)});
-  table.add_row({"P", std::format("{:02X}", status.P)});
+  table.add_row({"P", std::format("{:02B}", status.P)});
 
   return table;
 }

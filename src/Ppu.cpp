@@ -20,12 +20,12 @@ uint8_t Ppu::read(const uint16_t address) const {
   spdlog::info("Ppu::read: 0x{0:X}", address);
 
   switch (address) {
-    case Registers::CONTROLLER:
-    case Registers::MASK:
+    case CONTROLLER:
+    case MASK:
       // Write Only
       return 0;
 
-    case Registers::STATUS: {
+    case STATUS: {
       const auto status = _registers.status;
       _registers.status_bits.vertical_blank = false;
 
@@ -33,24 +33,24 @@ uint8_t Ppu::read(const uint16_t address) const {
       return status;
     }
 
-    case Registers::OAM_ADDRESS:
+    case OAM_ADDRESS:
       return _registers.oam_address;
 
-    case Registers::OAM_DATA:
+    case OAM_DATA:
       return _registers.oam_data;
 
-    case Registers::SCROLL:
+    case SCROLL:
       // Write Only
       return 0;
 
-    case Registers::ADDRESS:
+    case ADDRESS:
       // Write Only
       return 0;
 
-    case Registers::DATA: {
+    case DATA: {
       static uint8_t cached_data = 0;
       _registers.data = cached_data;
-      // cached_data = _ppu_map->read(_registers.address);
+      cached_data = _ppu_map->read(_registers.address);
 
       return _registers.data;
     }
@@ -70,31 +70,31 @@ void Ppu::write(const uint16_t address, const uint8_t data) {
   spdlog::info("Ppu::write: 0x{0:X}", address);
 
   switch (address) {
-    case Registers::CONTROLLER:
+    case CONTROLLER:
       _registers.controller = data;
       return;
 
-    case Registers::MASK:
+    case MASK:
       _registers.mask = data;
       return;
 
-    case Registers::STATUS:
+    case STATUS:
       // Read Only
       return;
 
-    case Registers::OAM_ADDRESS:
+    case OAM_ADDRESS:
       _registers.oam_address = data;
       return;
 
-    case Registers::OAM_DATA:
+    case OAM_DATA:
       _registers.oam_data = data;
       return;
 
-    case Registers::SCROLL:
+    case SCROLL:
       _registers.scroll = data;
       return;
 
-    case Registers::ADDRESS: {
+    case ADDRESS: {
       if (_int_registers.w) {
         // Write Low Byte
         _registers.address &= 0xFF00;
@@ -109,9 +109,9 @@ void Ppu::write(const uint16_t address, const uint8_t data) {
       return;
     }
 
-    case Registers::DATA:
+    case DATA:
       _registers.data = data;
-      //@todo _ppu_map->write(_registers.address, _registers.data);
+      _ppu_map->write(_registers.address, _registers.data);
       _registers.address++;
       _registers.address &= 0x3FFF;
       return;

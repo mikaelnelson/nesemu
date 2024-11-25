@@ -5,4 +5,6 @@ target_sources(${PROJECT_NAME} PUBLIC
         CpuStatusSprite.h
         PpuDisplaySprite.cpp
         PpuDisplaySprite.h
+        PpuRegistersSprite.cpp
+        PpuRegistersSprite.h
 )

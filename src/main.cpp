@@ -13,6 +13,7 @@
 #include "MemoryMap.h"
 #include "Ppu.h"
 #include "PpuDisplaySprite.h"
+#include "PpuRegistersSprite.h"
 #include "Ram.h"
 
 class NESEmu : public olc::PixelGameEngine {
@@ -23,7 +24,8 @@ class NESEmu : public olc::PixelGameEngine {
         _ppu_map(std::make_shared<MemoryMap>()),
         _cpu(std::make_shared<Cpu>(_memory_map)),
         _ppu(std::make_shared<Ppu>(_ppu_map)),
-        _cpu_status_sprite(_cpu, 150, 300),
+        _cpu_status_sprite(_cpu, 130, 300),
+        _ppu_registers_sprite(_ppu, 170, 300),
         _ppu_display_sprite(_ppu) {
     sAppName = "NESEmu";
   }
@@ -67,7 +69,9 @@ class NESEmu : public olc::PixelGameEngine {
     Clear(olc::BLACK);
 
     DrawSprite(0, 0, _ppu_display_sprite.draw(this));
-    DrawSprite(256, 0, _cpu_status_sprite.draw(this));
+    DrawSprite(_ppu_display_sprite.width, 0, _cpu_status_sprite.draw(this));
+    DrawSprite(_ppu_display_sprite.width + _cpu_status_sprite.width, 0,
+               _ppu_registers_sprite.draw(this));
 
     return true;
   }
@@ -79,6 +83,7 @@ class NESEmu : public olc::PixelGameEngine {
   std::shared_ptr<Cpu> _cpu;
   std::shared_ptr<Ppu> _ppu;
   CpuStatusSprite _cpu_status_sprite;
+  PpuRegistersSprite _ppu_registers_sprite;
   PpuDisplaySprite _ppu_display_sprite;
 };
 
