@@ -1,6 +1,6 @@
-#include "CpuStatusSprite.h"
+#include "CpuRegistersSprite.h"
 
-olc::Sprite* CpuStatusSprite::draw(olc::PixelGameEngine* pge) {
+olc::Sprite* CpuRegistersSprite::draw(olc::PixelGameEngine* pge) {
   static bool first_time = true;
   if (auto cpu_status = _cpu->get_cpu_status();
       cpu_status != _prv_cpu_status || first_time) {
@@ -21,7 +21,7 @@ olc::Sprite* CpuStatusSprite::draw(olc::PixelGameEngine* pge) {
   return this;
 }
 
-tabulate::Table CpuStatusSprite::generate_table(const CpuStatus& status) {
+tabulate::Table CpuRegistersSprite::generate_table(const CpuStatus& status) {
   tabulate::Table table;
 
   table.add_row({"Reg", "Value"});

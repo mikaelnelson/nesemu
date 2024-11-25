@@ -9,7 +9,7 @@
 #include "Cartridge.h"
 #include "CartridgeLoader.h"
 #include "Cpu.h"
-#include "CpuStatusSprite.h"
+#include "CpuRegistersSprite.h"
 #include "MemoryMap.h"
 #include "Ppu.h"
 #include "PpuDisplaySprite.h"
@@ -82,7 +82,7 @@ class NESEmu : public olc::PixelGameEngine {
   std::shared_ptr<MemoryMap> _ppu_map;
   std::shared_ptr<Cpu> _cpu;
   std::shared_ptr<Ppu> _ppu;
-  CpuStatusSprite _cpu_status_sprite;
+  CpuRegistersSprite _cpu_status_sprite;
   PpuRegistersSprite _ppu_registers_sprite;
   PpuDisplaySprite _ppu_display_sprite;
 };
