@@ -30,7 +30,7 @@ tabulate::Table CpuRegistersSprite::generate_table(const CpuStatus& status) {
   table.add_row({"Y", std::format("{:02X}", status.Y)});
   table.add_row({"SP", std::format("{:02X}", status.SP)});
   table.add_row({"PC", std::format("{:04X}", status.PC)});
-  table.add_row({"P", std::format("{:02B}", status.P)});
+  table.add_row({"P", std::format("{:08B}", status.P)});
 
   return table;
 }

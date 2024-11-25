@@ -24,7 +24,7 @@ class NESEmu : public olc::PixelGameEngine {
         _ppu_map(std::make_shared<MemoryMap>()),
         _cpu(std::make_shared<Cpu>(_memory_map)),
         _ppu(std::make_shared<Ppu>(_ppu_map)),
-        _cpu_status_sprite(_cpu, 130, 300),
+        _cpu_status_sprite(_cpu, 150, 300),
         _ppu_registers_sprite(_ppu, 170, 300),
         _ppu_display_sprite(_ppu) {
     sAppName = "NESEmu";
@@ -54,6 +54,8 @@ class NESEmu : public olc::PixelGameEngine {
       return false;
     }
 
+    _ppu->add_observer(&_ppu_display_sprite);
+
     _cpu->reset();
     return true;
   }
@@ -61,7 +63,7 @@ class NESEmu : public olc::PixelGameEngine {
   bool OnUserUpdate(float fElapsedTime) override {
     // Temporarily call 100 times per update, will adjust this to be
     // based on 60fps later
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 1000; i++) {
       _cpu->clock_update(1);
       _ppu->clock_update(3);
     }

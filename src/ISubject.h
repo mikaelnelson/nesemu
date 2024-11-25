@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <vector>
 
 #include "IObserver.h"
@@ -10,11 +9,9 @@ class ISubject {
  public:
   virtual ~ISubject() = default;
 
-  void add_observer(std::shared_ptr<IObserver<T>> observer) {
-    observers.push_back(observer);
-  }
+  void add_observer(IObserver<T>* observer) { observers.push_back(observer); }
 
-  void remove_observer(std::shared_ptr<IObserver<T>> observer) {
+  void remove_observer(IObserver<T>* observer) {
     observers.erase(std::remove(observers.begin(), observers.end(), observer),
                     observers.end());
   }
@@ -28,5 +25,5 @@ class ISubject {
   size_t observers_count() const { return observers.size(); }
 
  private:
-  std::vector<std::shared_ptr<IObserver<T>>> observers;
+  std::vector<IObserver<T>*> observers;
 };

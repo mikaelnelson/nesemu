@@ -14,6 +14,8 @@ target_sources(${PROJECT_NAME} PRIVATE
         Rom.h
         Ppu.cpp
         Ppu.h
+        PpuFrame.cpp
+        PpuFrame.h
         Cpu.cpp
         Cpu.h
         IBus.h

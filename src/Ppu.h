@@ -4,11 +4,8 @@
 #include "IMemory.h"
 #include "ISubject.h"
 #include "MemoryMap.h"
+#include "PpuFrame.h"
 #include "Ram.h"
-
-static constexpr uint16_t PPU_V_RES = 240;
-static constexpr uint16_t PPU_H_RES = 256;
-using PpuFrame = std::array<uint8_t, PPU_V_RES * PPU_H_RES>;
 
 class Ppu : public ISubject<PpuFrame>, public IMemory {
  public:
@@ -92,6 +89,7 @@ class Ppu : public ISubject<PpuFrame>, public IMemory {
   int _scanline;
   mutable Registers _registers;
   mutable InternalRegisters _int_registers;
+  PpuFrame _ppu_frame;
 
   void tick();
   void do_vblank(const int scanline, const int cycle);

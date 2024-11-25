@@ -146,6 +146,15 @@ void Ppu::tick() {
   if (_scanline >= SCANLINES_PER_FRAME) {
     // End of Frame
     _scanline = 0;
+
+    // Write Noise to Frame
+    for (int x = 0; x < PpuFrame::WIDTH; x++) {
+      for (int y = 0; y < PpuFrame::HEIGHT; y++) {
+        _ppu_frame.set_pixel(x, y, rand() % 256, rand() % 256, rand() % 256);
+      }
+    }
+
+    notify_observers(_ppu_frame);
   }
 }
 

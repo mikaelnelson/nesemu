@@ -1,13 +1,13 @@
 #include "PpuDisplaySprite.h"
 
-olc::Sprite* PpuDisplaySprite::draw(olc::PixelGameEngine* pge) {
-  pge->SetDrawTarget(this);
+olc::Sprite* PpuDisplaySprite::draw(olc::PixelGameEngine* pge) { return this; }
 
-  pge->Clear(olc::WHITE);
-  // @todo Draw the PPU frame to the sprite
-
-  pge->SetDrawTarget(nullptr);
-  return this;
+void PpuDisplaySprite::update(const PpuFrame& frame) {
+  // _frame = frame;
+  for (int x = 0; x < PpuFrame::WIDTH; x++) {
+    for (int y = 0; y < PpuFrame::HEIGHT; y++) {
+      // Set Pixel, Ignore Alpha Channel
+      SetPixel(x, y, olc::Pixel(0xFF000000 | frame.get_pixel(x, y)));
+    }
+  }
 }
-
-void PpuDisplaySprite::update(const PpuFrame& frame) { _frame = frame; }
