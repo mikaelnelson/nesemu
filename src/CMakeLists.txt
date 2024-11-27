@@ -16,6 +16,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         Ppu.h
         PpuFrame.cpp
         PpuFrame.h
+        PpuPalette.h
         Cpu.cpp
         Cpu.h
         IBus.h

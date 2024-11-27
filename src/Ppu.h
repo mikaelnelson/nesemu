@@ -56,6 +56,7 @@ class Ppu : public ISubject<PpuFrame>, public IMemory {
   explicit Ppu(const std::shared_ptr<MemoryMap> &ppu_map)
       : _ppu_map(ppu_map),
         _vram(std::make_shared<Ram>(0x1000)),
+        _palette_ram(std::make_shared<Ram>(0x20)),
         _size(Registers::COUNT),
         _cycle(0),
         _scanline(SCANLINE_PRE_RENDER) {
@@ -63,6 +64,9 @@ class Ppu : public ISubject<PpuFrame>, public IMemory {
 
     // @note: Mirror VRAM, omit last 0x100 bytes
     _ppu_map->register_device(_vram, 0x3000, _vram->size() - 0x100);
+
+    // @todo: Palette RAM mirrored from 0x3F20 to 0x3FFF
+    _ppu_map->register_device(_palette_ram, 0x3F00, _palette_ram->size());
   };
 
   uint16_t size() const { return _size; }
@@ -95,6 +99,7 @@ class Ppu : public ISubject<PpuFrame>, public IMemory {
 
   std::shared_ptr<MemoryMap> _ppu_map;
   std::shared_ptr<Ram> _vram;
+  std::shared_ptr<Ram> _palette_ram;
   const uint16_t _size;
   int _cycle;
   int _scanline;
